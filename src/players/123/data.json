@@ -1,0 +1,21 @@
+{
+  "name" : "123",
+  "recovery" : [ "123", "123", "123", "123", "123", "123" ],
+  "dormId" : 100002,
+  "money" : 0.0,
+  "inTrade" : false,
+  "tradeItem" : null,
+  "tradePartner" : "",
+  "lastPlayer" : "",
+  "hasChallenge" : false,
+  "inBattle" : false,
+  "challenger" : " ",
+  "option" : "",
+  "challengerOption" : "",
+  "filteredWords" : [ ],
+  "message" : ">>>[11/15/18 01:43:26] You ",
+  "title" : "",
+  "direction" : "North",
+  "currentInventory" : [ ],
+  "currentRoom" : 100000
+}
