@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -21,6 +20,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
+
 
 /**
  *
@@ -92,8 +92,8 @@ public class GameCore implements GameCoreInterface {
                     double inWeight = 0;
                     double inValue = 0;
                     String inName = "";
-			String inFlavor = "";
-			String inDisc = "";
+		        	String inFlavor = "";
+		        	String inDisc = "";
                     Scanner scanner = new Scanner(new File("./items.csv"));
                     scanner.nextLine();
                     scanner.useDelimiter(",|\\r\\n|\\n|\\r");
@@ -102,8 +102,8 @@ public class GameCore implements GameCoreInterface {
                     {
                         inName = scanner.next();
                         inWeight = Double.parseDouble(scanner.next().replace(",", ""));
-			inValue = Double.parseDouble(scanner.next().replace(",", ""));
-			inDisc = scanner.next();
+		            	inValue = Double.parseDouble(scanner.next().replace(",", ""));
+		            	inDisc = scanner.next();
                         inFlavor = scanner.next().replace("\\r\\n|\\r|\\n", "");
                         Item newItem = new Item(inName, inWeight, inValue, inDisc, inFlavor);
                         objects.add(newItem);
@@ -119,7 +119,7 @@ public class GameCore implements GameCoreInterface {
                 }
                 while(true) {
                     try {
-                        Thread.sleep(rand.nextInt(60000));
+                        Thread.sleep(rand.nextInt(24000));
                         object = objects.get(rand.nextInt(objects.size()));
                         room = map.randomRoom();
                         room.addObject(object);
@@ -870,10 +870,12 @@ public class GameCore implements GameCoreInterface {
             dorm.addExit(Direction.valueOf("EAST"),-100000,"You go back to the elevator");
             dorm.addExit(Direction.valueOf("SOUTH"),100000,"You go back to the elevator");
             dorm.addExit(Direction.valueOf("WEST"),-100000,"You go back to the elevator");
+            dorm.setChest(player.chestImage);//point to the chest
             this.map.addRoom(dorm);
+            
             if(player.getCurrentRoom() > 100000){player.setCurrentRoom(dormCountId);}
             dormCountId++;
-
+            
 			this.broadcast(player, player.getName() + " has arrived.");
 			connectionLog(true, player.getName());
 			return player;
@@ -1057,6 +1059,50 @@ public class GameCore implements GameCoreInterface {
 		return "You stop moving and begin to stand around again.";
 	}
 	
+
+    /**115 jorge team 6
+    *This takes the player into the chest action menu
+    * where they can move things between their pockets 
+    * and the chest in their dorm room 
+    * this should only run when the player is 
+    * in the dorm room 
+     */
+    public String chest (String name, String opt, String input)  {
+        
+        Player player = this.playerList.findPlayer(name);
+        Room droom = map.findRoom(player.getCurrentRoom());
+
+        switch (opt){
+
+            case "check"://ensure player is in his room 
+
+                if(player.getCurrentRoom() != player.getDormId()) {                                                      
+                           return ("not in dorm room");
+                            
+                 }return "ok";
+            case "menu":
+               return ((DormRoom)droom).chestMenu();
+            case "a"://adds an item to the chest 
+                Item object = player.removeObjectFromInventory(input);
+                if(object != null) {                                                               
+                      return ((DormRoom)droom).addObjectToChest(object);
+                }else{
+                    return "error";
+                }
+            case "p": //print the chest content
+                return ((DormRoom)droom).printChest();
+            case "x":
+                object = ((DormRoom)droom).removeObjectfromChest(input);
+                if(object != null) {                     
+                     player.addObjectToInventory(object);
+                     return "ok";  
+                }else{
+                    return "error";
+                }
+        }//end switch
+
+            return "chest switch error in GameCore chest()";
+    }//end chest command  
 
 
 	/**
@@ -1491,7 +1537,9 @@ public class GameCore implements GameCoreInterface {
 	@Override
 	public Player leave(String name) {
 		Player player = this.playerList.findPlayer(name);
+        Room droom = map.findRoom(player.getDormId());
 		if (player != null) {
+            player.chestImage = ((DormRoom)droom).getChest();    
 			this.broadcast(player, "You see " + player.getName() + " heading off to class.");
 			this.playerList.removePlayer(name);
             connectionLog(false, player.getName());

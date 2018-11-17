@@ -47,6 +47,15 @@ public class GameObject extends UnicastRemoteObject implements GameObjectInterfa
     }    
 
 	/**
+	 * implements the chst operations 
+	 * @param playerName Player name
+	 * @return String message from chest operations
+	 * @throws RemoteException
+	 */
+	public String chest(String playerName, String option, String item) throws RemoteException {
+		return core.chest(playerName,option,item);
+	}
+	/**
 	 * Used to create a hash encrypted in SHA256 for use in encrypting passwords
 	 * 
 	 * @param toHash

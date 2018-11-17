@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties({ "replyWriter", "outputWriter" })
 public class Player {
     private int dormId;//used to determine private dormroom Id
+    public LinkedList<Item> chestImage;
     public LinkedList<Item> currentInventory;
     private String name;
     private int currentRoom;
@@ -50,6 +51,7 @@ public class Player {
         this.name = name;
         this.recovery = recovery;
         this.currentInventory = new LinkedList<>();
+        this.chestImage = new LinkedList<>();
         this.money = 0;
     }
 
